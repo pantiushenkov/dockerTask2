@@ -9,14 +9,13 @@ const app = express();
   const client = await MongoClient.connect(url);
   const db = client.db('test');
 
-  await db.collection('Requests').deleteMany({});
-
   app.use(async (req, res) => {
     const collection = db.collection('Requests');
 
     await collection.insertOne({
+      containerId: process.env.containerId,
       ip: req.connection.remoteAddress,
-      date: new Date().toLocaleString()
+      date: new Date().toLocaleString(),
     });
 
     const requests = await collection.find({},{projection:{ _id: 0 }}).sort({date: -1}).toArray();
